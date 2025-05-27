@@ -9,14 +9,18 @@ import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
 public class AwsS3Config {
+    private final EnvConfig envConfig;
 
+    public AwsS3Config(EnvConfig envConfig) {
+        this.envConfig = envConfig;
+    }
     @Bean
     public S3Client s3Client() {
         return S3Client.builder()
-                .region(Region.of(EnvConfig.getAwsRegion()))
+                .region(Region.of(envConfig.getAwsRegion()))
                 .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(EnvConfig.getAwsAccessKey()
-                                , EnvConfig.getAwsSecretKey())
+                        AwsBasicCredentials.create(envConfig.getAwsAccessKey()
+                                , envConfig.getAwsSecretKey())
                 ))
                 .build();
     }

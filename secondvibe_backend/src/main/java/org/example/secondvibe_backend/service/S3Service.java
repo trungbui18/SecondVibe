@@ -15,27 +15,27 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class S3Service {
     private final S3Client s3Client;
-    private final String bucketName = EnvConfig.getBucketName();
+    private final EnvConfig envConfig;
 
     public String uploadFile(MultipartFile file) throws IOException {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
         s3Client.putObject(
                 PutObjectRequest.builder()
-                        .bucket(bucketName)
+                        .bucket(envConfig.getBucketName())
                         .key(fileName)
                         .contentType(file.getContentType())
                         .build(),
                 RequestBody.fromBytes(file.getBytes())
         );
 
-        return "https://" + bucketName + ".s3.amazonaws.com/" + fileName;
+        return "https://" + envConfig.getBucketName() + ".s3.amazonaws.com/" + fileName;
     }
 
     public void deleteFile(String fileName) {
         s3Client.deleteObject(
                 DeleteObjectRequest.builder()
-                        .bucket(bucketName)
+                        .bucket(envConfig.getBucketName())
                         .key(fileName)
                         .build()
         );
