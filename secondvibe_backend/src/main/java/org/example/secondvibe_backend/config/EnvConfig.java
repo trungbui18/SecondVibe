@@ -47,7 +47,13 @@ public class EnvConfig {
         return dotenv.get("ISSUER", "secondvibe");
     }
 
-    // ======= Helper methods =========
+    public String getClientId(){
+        return getRequired("GOOGLE_CLIENT_ID");
+    }
+    public String getClientSecret(){
+        return getRequired("GOOGLE_CLIENT_SECRET");
+    }
+
 
     private String getRequired(String key) {
         String value = dotenv.get(key);
