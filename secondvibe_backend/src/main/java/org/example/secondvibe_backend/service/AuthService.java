@@ -63,6 +63,7 @@ public class AuthService {
         client.setAccount(account);
         client.setSdt(request.getSdt());
         client.setAddress(request.getAddress());
+        client.setAvatar("https://secondvibe.s3.ap-southeast-2.amazonaws.com/anonymous.jpg");
         client.setFullName(request.getFullName());
         client.setBirthday(request.getBirthday());
         clientRepository.save(client);
@@ -74,11 +75,11 @@ public class AuthService {
         loginResponse.setEmail(account.getEmail());
         loginResponse.setFullName(client.getFullName());
         loginResponse.setRole(account.getRole());
+        loginResponse.setAvatar(account.getClient().getAvatar());
 
         String role=account.getRole().toString();
         String accessToken=jwtUntil.generateToken(account.getEmail(),role);
         String refreshToken=jwtUntil.generateRefreshToken(account.getEmail(),role);
-
         loginResponse.setAccessToken(accessToken);
         loginResponse.setRefreshToken(refreshToken);
 
@@ -95,7 +96,8 @@ public class AuthService {
         int idUser=account.getClient().getId();
         String name=account.getClient().getFullName();
         String email=account.getEmail();
-        return new LoginResponse(idUser,name,email,role,accessToken,refreshToken);
+        String avatar=account.getClient().getAvatar();
+        return new LoginResponse(idUser,name,email,avatar,role,accessToken,refreshToken);
     }
 
     public LoginResponse loginWithGoogle(LoginGoogleRequest request) {
@@ -115,14 +117,13 @@ public class AuthService {
                 String email = payload.getEmail();
                 String name = (String) payload.get("name");
                 String pictureUrl = (String) payload.get("picture");
-
                 if(accountRepository.existsAccountByEmail(email)) {
                     Account account=accountRepository.findByEmail(email).orElseThrow(()->new BaseException("Khong tim thay account"));
                     Role role = account.getRole();
                     String accessToken=jwtUntil.generateToken(email, role.toString());
                     String refreshToken=jwtUntil.generateRefreshToken(email,role.toString());
                     int idUser=account.getClient().getId();
-                    return new LoginResponse(idUser,name,email,role,accessToken,refreshToken);
+                    return new LoginResponse(idUser,name,email,pictureUrl,role,accessToken,refreshToken);
                 }
                 LocalDate today = LocalDate.now();
                 int age = today.getYear() - request.getBirthday().getYear();
@@ -141,6 +142,7 @@ public class AuthService {
                 client.setSdt(request.getSdt());
                 client.setAddress(request.getAddress());
                 client.setFullName(name);
+                client.setAvatar(pictureUrl);
                 client.setBirthday(request.getBirthday());
                 clientRepository.save(client);
 

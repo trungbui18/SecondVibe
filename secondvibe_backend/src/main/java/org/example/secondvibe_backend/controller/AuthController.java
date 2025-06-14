@@ -4,6 +4,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.example.secondvibe_backend.config.EnvConfig;
 import org.example.secondvibe_backend.dto.request.LoginGoogleRequest;
@@ -28,9 +30,10 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthService authService;
-
-    public AuthController(AuthService authService) {
+    private final EnvConfig envConfig;
+    public AuthController(AuthService authService, EnvConfig envConfig) {
         this.authService = authService;
+        this.envConfig = envConfig;
     }
 
     @PostMapping("/register")
@@ -40,15 +43,46 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         LoginResponse loginResponse= authService.login(loginRequest);
+        Cookie refreshTokenCookie = new Cookie("refreshToken", loginResponse.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(Integer.parseInt(String.valueOf(envConfig.getRefreshTokenExpiration())));
+
+        response.addCookie(refreshTokenCookie);
+
+        loginResponse.setRefreshToken(null);
         return ApiResponseBuilder.success("Lgoin Successfully",loginResponse);
     }
 
     @PostMapping("/google")
-    public ApiResponse<LoginResponse> loginWithGoogle(@RequestBody LoginGoogleRequest request) {
+    public ApiResponse<LoginResponse> loginWithGoogle(@RequestBody LoginGoogleRequest request,HttpServletResponse response) {
         LoginResponse loginResponse= authService.loginWithGoogle(request);
+        Cookie refreshTokenCookie = new Cookie("refreshToken", loginResponse.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(Integer.parseInt(String.valueOf(envConfig.getRefreshTokenExpiration())));
+
+        response.addCookie(refreshTokenCookie);
+
+        loginResponse.setRefreshToken(null);
         return ApiResponseBuilder.success("Lgoin Successfully",loginResponse);
 
     }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok("Logout successful");
+    }
+
 }
