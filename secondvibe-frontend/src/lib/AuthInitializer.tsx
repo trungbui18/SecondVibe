@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUser } from "./slice/authSlice";
+import { setUser } from "./redux/slice/authSlice";
 
 export default function AuthInitializer({
   children,

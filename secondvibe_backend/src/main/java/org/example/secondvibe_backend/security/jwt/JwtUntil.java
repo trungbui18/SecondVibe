@@ -29,7 +29,7 @@ public class JwtUntil {
             Instant now = Instant.now();
             return Jwts.builder()
                     .issuer(envConfig.getIssuer())
-                    .subject(username)
+                    .subject(username).claim("idUser",5)
                     .claim("role", roles)
                     .issuedAt(Date.from(now))
                     .expiration(Date.from(now.plusSeconds(envConfig.getAccessTokenExpiration())))

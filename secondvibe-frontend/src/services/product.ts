@@ -1,8 +1,7 @@
 import { ApiResponse } from "@/types/apiResponse";
 import { axiosInstancePublic } from "@/lib/axiosInstance";
 import { ProductCreateRequest, Product } from "@/types/product";
-import Router from "next/router";
-export const createProduct = async (
+const createProduct = async (
   data: ProductCreateRequest,
   images: File[]
 ): Promise<ApiResponse<Product>> => {
@@ -40,7 +39,15 @@ export const createProduct = async (
   }
 };
 
+const getProductById = async (id: number): Promise<ApiResponse<Product>> => {
+  const response = await axiosInstancePublic.get(
+    `/product/get_by_idproduct/${id}`
+  );
+  return response.data;
+};
+
 const productApi = {
   createProduct,
+  getProductById,
 };
 export default productApi;

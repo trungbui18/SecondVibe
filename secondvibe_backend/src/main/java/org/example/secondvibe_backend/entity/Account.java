@@ -10,6 +10,8 @@ import lombok.experimental.FieldDefaults;
 import org.example.secondvibe_backend.entity.enums.AccountStatus;
 import org.example.secondvibe_backend.entity.enums.Role;
 
+import java.time.LocalDate;
+
 @Data
 @Entity
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -22,6 +24,7 @@ public class Account {
     @Column(unique = true)
     String email;
     String password;
+    LocalDate create_at;
     @Enumerated(EnumType.STRING)
     Role role;
     @Enumerated(EnumType.STRING)

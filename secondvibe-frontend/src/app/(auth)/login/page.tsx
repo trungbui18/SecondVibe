@@ -6,7 +6,7 @@ import Link from "next/link";
 import authApi from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/lib/slice/authSlice";
+import { setUser } from "@/lib/redux/slice/authSlice";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +26,11 @@ export default function LoginPage() {
       const { id, email, fullName, avatar, role } = userData;
       dispatch(setUser({ id, email, fullName, avatar, role }));
       sessionStorage.setItem("token", response.data.accessToken);
-      router.push("/");
+      if (response.data.role === "ADMINISTRATOR") {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
     } else {
       console.error("Login failed");
     }

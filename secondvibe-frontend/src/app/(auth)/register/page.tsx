@@ -5,7 +5,7 @@ import GoogleLoginButton from "@/components/ui/GoogleLoginButton";
 import authApi from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/lib/slice/authSlice";
+import { setUser } from "@/lib/redux/slice/authSlice";
 export default function RegisterPage() {
   const router = useRouter();
   const dispatch = useDispatch();

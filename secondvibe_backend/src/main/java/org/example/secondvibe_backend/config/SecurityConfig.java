@@ -47,7 +47,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**","/product/**","/brand/**","/size/**","/condition/**"
-                        ,"/subcategory/**","/category/**").permitAll()
+                        ,"/subcategory/**","/category/**","/client/**","/cart/**","/cart_detail/**"
+                        ,"/order/**","/checkout/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

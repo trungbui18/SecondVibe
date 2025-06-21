@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -32,7 +33,15 @@ public class Client {
     @JsonBackReference
     Account account;
 
+    @OneToOne(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    Cart cart;
+
     @OneToMany(mappedBy = "seller",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonManagedReference
-    List<Product> products;
+    List<Product> products=new ArrayList<>();
+
+    @OneToMany(mappedBy = "client",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonManagedReference
+    List<Reservation> reservations;
 }

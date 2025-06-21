@@ -4,6 +4,7 @@ import org.example.secondvibe_backend.dto.response.SizeResponse;
 import org.example.secondvibe_backend.response.ApiResponse;
 import org.example.secondvibe_backend.response.ApiResponseBuilder;
 import org.example.secondvibe_backend.service.SizeService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

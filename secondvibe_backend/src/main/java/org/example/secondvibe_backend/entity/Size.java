@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -25,5 +26,13 @@ public class Size {
 
     @OneToMany(mappedBy = "size",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    List<ProductSize> productSizes;
+    List<ProductSize> productSizes=new ArrayList<>();
+
+    @OneToMany(mappedBy = "size",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<CartDetail> cartDetails=new ArrayList<>();
+
+    @OneToMany(mappedBy = "size",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<ReservationItem> reservationItems=new ArrayList<>();
 }

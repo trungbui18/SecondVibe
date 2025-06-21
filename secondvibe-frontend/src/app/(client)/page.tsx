@@ -3,11 +3,11 @@
 import React from "react";
 import { useProducts } from "@/hooks/useProduct";
 import LoadingSpinner from "@/components/ui/LoadingSpinner ";
-import Header from "@/components/layout/client/header/Header";
-import Footer from "@/components/layout/client/footer/Footer";
+import Header from "@/components/client/layout/header/Header";
+import Footer from "@/components/client/layout/footer/Footer";
 import SearchInput from "@/components/ui/SearchInput";
-import ListBrandNav from "@/components/layout/client/brand/ListBrandNav";
-import ProductList from "@/components/layout/client/product/ProductList";
+import ListBrandNav from "@/components/client/brand/ListBrandNav";
+import ProductList from "@/components/client/product/ProductList";
 export default function ClientPage() {
   const { products, isLoading, error } = useProducts();
 

@@ -13,6 +13,6 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product,Integer> {
     @EntityGraph(attributePaths = {"condition", "brand", "subCategory", "productSizes", "productSizes.size"})
     Optional<Product> findWithAllDetailsById(int id);
-
+    Optional<List<Product>> findAllBySellerId(int id);
     List<Product> findBySeller_IdAndStatusNot(int idSeller, ProductStatus status);
 }

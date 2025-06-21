@@ -37,6 +37,14 @@ public class Product {
     @JsonManagedReference
     List<ProductSize> productSizes=new ArrayList<>();
 
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<ReservationItem> reservationItem;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<CartDetail> cartDetails=new ArrayList<>();
+
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name="seller_id",nullable=false)
@@ -56,6 +64,7 @@ public class Product {
     @JsonBackReference
     @JoinColumn(name = "subcategory_id",nullable = false)
     SubCategory subCategory;
+
 
 
 }

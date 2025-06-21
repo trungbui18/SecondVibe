@@ -4,7 +4,11 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get("refreshToken")?.value;
 
-  if (!refreshToken && request.nextUrl.pathname.startsWith("/sell")) {
+  if (
+    !refreshToken &&
+    (request.nextUrl.pathname.startsWith("/sell") ||
+      request.nextUrl.pathname.startsWith("/cart"))
+  ) {
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
@@ -12,7 +16,6 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Chỉ chạy middleware cho các route cần bảo vệ
 export const config = {
-  matcher: ["/sell/:path*"],
+  matcher: ["/sell", "/sell/:path*", "/cart", "/cart/:path*"],
 };

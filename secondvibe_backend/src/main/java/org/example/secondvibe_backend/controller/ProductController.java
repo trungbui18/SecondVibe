@@ -1,14 +1,19 @@
 package org.example.secondvibe_backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.secondvibe_backend.dto.request.CheckQuantityProductRequest;
 import org.example.secondvibe_backend.dto.request.ProductCreateRequest;
 import org.example.secondvibe_backend.dto.request.ProductUpdateRequest;
+import org.example.secondvibe_backend.dto.response.CheckQuantityProductResponse;
+import org.example.secondvibe_backend.dto.response.ProductInProfile;
 import org.example.secondvibe_backend.dto.response.ProductResponse;
 import org.example.secondvibe_backend.exception.BadRequestException;
 import org.example.secondvibe_backend.response.ApiResponse;
 import org.example.secondvibe_backend.response.ApiResponseBuilder;
 import org.example.secondvibe_backend.service.ProductService;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +47,18 @@ public class ProductController {
         return ApiResponseBuilder.success("Get all products", productResponseList);
     }
 
+    @GetMapping("/get_all_by_userId/{idUser}")
+    public ApiResponse<List<ProductInProfile>> getAllByUserId(@PathVariable int idUser) {
+        List<ProductInProfile> ds=productService.getProductByIdUser(idUser);
+        return ApiResponseBuilder.success("Get all products by user", ds);
+    }
+
+//    @PostMapping("/check")
+//    public ApiResponse<CheckQuantityProductResponse> check(@RequestBody CheckQuantityProductRequest request) {
+//        CheckQuantityProductResponse response=productService.checkQuantityProduct(request);
+//        return ApiResponseBuilder.success("Check product", response);
+//    }
+
     @PostMapping(value="/create",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ProductResponse> createProduct(@RequestParam("product") String jsonProduct,
                                                       @RequestParam List<MultipartFile> images) {
@@ -55,8 +72,10 @@ public class ProductController {
         }
     }
 
+//    @PreAuthorize("has_authoried and authentication.principal.idUser(au.principal)")
     @PutMapping(value="/update/{idProductUpdate}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<ProductResponse> updateProduct(@PathVariable int idProductUpdate,
+                                                      Authentication au,
                                                       @RequestPart("product") String jsonProduct,
                                                       @RequestPart(value = "imagesUploaded",required = false) List<MultipartFile> imagesUploaded,
                                                       @RequestParam(value = "imagesDeleted",required = false) List<Integer> IdimagesDeleted){

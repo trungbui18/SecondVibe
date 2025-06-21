@@ -4,7 +4,7 @@ import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import authApi from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/lib/slice/authSlice";
+import { setUser } from "@/lib/redux/slice/authSlice";
 export default function GoogleLoginButton() {
   const router = useRouter();
   const dispatch = useDispatch();

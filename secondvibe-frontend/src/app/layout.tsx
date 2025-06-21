@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Providers from "./providers";
 import "./globals.css";
 import AuthInitializer from "@/lib/AuthInitializer";
+import { PersistGate } from "redux-persist/integration/react";
+
 export const metadata: Metadata = {
   title: "SecondVibe Bon",
   description: "Sàn thương mại quần áo cũ ",

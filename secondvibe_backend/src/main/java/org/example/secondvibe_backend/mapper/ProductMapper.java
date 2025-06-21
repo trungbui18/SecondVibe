@@ -1,11 +1,14 @@
 package org.example.secondvibe_backend.mapper;
 
 import org.example.secondvibe_backend.dto.request.ProductCreateRequest;
+import org.example.secondvibe_backend.dto.response.ProductInProfile;
 import org.example.secondvibe_backend.dto.response.ProductResponse;
 import org.example.secondvibe_backend.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+
+import java.util.List;
 
 
 @Mapper(componentModel = "spring", uses = {ProductSizeMapper.class,ProductImageMapper.class})
@@ -29,6 +32,21 @@ public interface ProductMapper {
     @Mapping(source = "productSizes", target = "productSizes")
     @Mapping(source = "images",target = "images")
     ProductResponse toProductResponse(Product product);
+
+    @Mapping(source = "condition.description", target = "condition")
+    @Mapping(source = "images", target = "img",qualifiedByName = "firstImageUrl")
+    ProductInProfile toProductInProfile(Product product);
+
+    @Named("firstImageUrl")
+    default String getFirstImageUrl(List<ProductImage> images) {
+        if (images != null && !images.isEmpty()) {
+            return images.get(0).getUrlImage();
+        }
+        return null;
+    }
+
+
+
 
     @Named("mapSeller")
     default Client mapSeller(int sellerId) {

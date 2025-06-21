@@ -71,4 +71,21 @@ public class EnvConfig {
             throw new IllegalStateException("Invalid number for " + key + ": " + value);
         }
     }
+
+    public String getVnpTmnCode() {
+        return getRequired("VNP_TMN_CODE");
+    }
+
+    public String getVnpHashSecret() {
+        return getRequired("VNP_HASH_SECRET");
+    }
+
+    public String getVnpReturnUrl() {
+        return getRequired("VNP_RETURN_URL");
+    }
+
+    public String getVnpPayUrl() {
+        return getRequired("VNP_PAY_URL");
+    }
+
 }

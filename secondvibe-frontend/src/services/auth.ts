@@ -1,25 +1,11 @@
 import { axiosInstancePublic } from "@/lib/axiosInstance";
-import { LoginRequest, LoginGoogleRequest } from "@/types/auth";
+import {
+  LoginRequest,
+  LoginGoogleRequest,
+  LoginResponseData,
+  RegisterRequest,
+} from "@/types/auth";
 import { ApiResponse } from "@/types/apiResponse";
-
-interface LoginResponseData {
-  id: number;
-  fullName: string;
-  email: string;
-  avatar: string;
-  role: string;
-  accessToken: string;
-  refreshToken: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  fullName: string;
-  sdt: string;
-  address: string;
-  birthday: string;
-}
 
 export const register = async (
   data: RegisterRequest

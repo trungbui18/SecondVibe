@@ -150,7 +150,7 @@ export default function ProductForm({
                     className="sr-only peer"
                     required
                   />
-                  <div className="px-4 py-2 border border-gray-300 rounded-full cursor-pointer peer-checked:bg-green-100 peer-checked:border-green-500 peer-checked:text-green-700 transition">
+                  <div className="px-4 py-2  border border-gray-300 rounded-full cursor-pointer peer-checked:bg-green-100 peer-checked:border-green-500 peer-checked:text-green-700 transition">
                     {item.description}
                   </div>
                 </label>

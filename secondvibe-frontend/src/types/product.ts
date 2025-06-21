@@ -34,3 +34,11 @@ export interface ProductCreateRequest {
   subCategory: number;
   productSizes: ProductSize[];
 }
+
+export interface ProductInProfile {
+  id: number;
+  name: string;
+  price: number;
+  condition: string;
+  img: string;
+}

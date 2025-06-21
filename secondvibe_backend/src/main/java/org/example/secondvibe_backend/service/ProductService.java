@@ -1,11 +1,15 @@
 package org.example.secondvibe_backend.service;
 
+import org.example.secondvibe_backend.dto.request.CheckQuantityProductRequest;
 import org.example.secondvibe_backend.dto.request.ProductCreateRequest;
 import org.example.secondvibe_backend.dto.request.ProductUpdateRequest;
+import org.example.secondvibe_backend.dto.response.CheckQuantityProductResponse;
+import org.example.secondvibe_backend.dto.response.ProductInProfile;
 import org.example.secondvibe_backend.dto.response.ProductResponse;
 import org.example.secondvibe_backend.entity.*;
 import org.example.secondvibe_backend.entity.enums.ProductStatus;
 import org.example.secondvibe_backend.exception.BadRequestException;
+import org.example.secondvibe_backend.exception.BaseException;
 import org.example.secondvibe_backend.mapper.ProductMapper;
 import org.example.secondvibe_backend.mapper.ProductSizeMapper;
 import org.example.secondvibe_backend.repository.*;
@@ -27,11 +31,13 @@ public class ProductService {
     private final ProductImageRepository productImageRepository;
     private final ProductMapper productMapper;
     private final ProductSizeMapper productSizeMapper;
+    private final ProductSizeRepository productSizeRepository;
+    private final ReservationRepository reservationRepository;
     private final S3Service s3Service;
 
     public ProductService(ProductRepository productRepository, BrandRepository brandRepository,
                           ConditionRepository conditionRepository, SubCategoryRepository subCategoryRepository, ProductImageRepository productImageRepository,
-                          ProductMapper productMapper, ProductSizeMapper productSizeMapper, S3Service s3Service) {
+                          ProductMapper productMapper, ProductSizeMapper productSizeMapper, ProductSizeRepository productSizeRepository, ReservationRepository reservationRepository, S3Service s3Service) {
         this.productRepository = productRepository;
         this.brandRepository = brandRepository;
         this.conditionRepository = conditionRepository;
@@ -39,6 +45,8 @@ public class ProductService {
         this.productImageRepository = productImageRepository;
         this.productMapper = productMapper;
         this.productSizeMapper = productSizeMapper;
+        this.productSizeRepository = productSizeRepository;
+        this.reservationRepository = reservationRepository;
         this.s3Service = s3Service;
     }
 
@@ -47,6 +55,12 @@ public class ProductService {
         return products.stream()
                 .map(productMapper::toProductResponse)
                 .collect(Collectors.toList());
+    }
+
+    public List<ProductInProfile> getProductByIdUser(int id){
+        List<Product> products=productRepository.findAllBySellerId(id).orElseThrow(()->new BaseException("Khong co san pham"));
+        List<ProductInProfile> productInProfiles=products.stream().map(productMapper::toProductInProfile).toList();
+        return productInProfiles;
     }
 
     public List<ProductResponse> getAll() {
@@ -143,6 +157,24 @@ public class ProductService {
         return productMapper.toProductResponse(product);
 
     }
+
+//    public CheckQuantityProductResponse checkQuantityProduct(CheckQuantityProductRequest productCheck) {
+//        ProductSize productSize=productSizeRepository.findByProduct_IdAndAndSize_Id(productCheck.getIdProduct(),productCheck.getSizeId()).orElseThrow(()->new BaseException("Not found size in Product"));
+//        int reserved=reservationRepository.getTotalQuantityByProductId(productCheck.getIdProduct(),productCheck.getSizeId());
+//        int inventory=productSize.getQuantity();
+//        int stock=inventory-reserved;
+//        CheckQuantityProductResponse response=new CheckQuantityProductResponse();
+//        response.setStock(stock);
+//        if(productCheck.getQuantity()>stock){
+//            response.setMessage("Not enough stock");
+//            response.setEnough(false);
+//        }else{
+//            response.setMessage(" Enough stock");
+//            response.setEnough(true);
+//        }
+//        return response;
+//
+//    }
 
 
 }

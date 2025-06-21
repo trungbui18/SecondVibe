@@ -19,8 +19,7 @@ import org.example.secondvibe_backend.exception.UnauthorizedException;
 import org.example.secondvibe_backend.repository.AccountRepository;
 import org.example.secondvibe_backend.repository.ClientRepository;
 import org.example.secondvibe_backend.security.jwt.JwtUntil;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +55,7 @@ public class AuthService {
         account.setEmail(request.getEmail());
         account.setPassword(passwordEncoder.encode(request.getPassword()));
         account.setRole(Role.CLIENT);
+        account.setCreate_at(today);
         account.setStatus(AccountStatus.ACTIVE);
         accountRepository.save(account);
 
@@ -134,6 +134,7 @@ public class AuthService {
                 Account account = new Account();
                 account.setEmail(email);
                 account.setRole(Role.CLIENT);
+                account.setCreate_at(today);
                 account.setStatus(AccountStatus.ACTIVE);
                 accountRepository.save(account);
 
@@ -142,6 +143,7 @@ public class AuthService {
                 client.setSdt(request.getSdt());
                 client.setAddress(request.getAddress());
                 client.setFullName(name);
+
                 client.setAvatar(pictureUrl);
                 client.setBirthday(request.getBirthday());
                 clientRepository.save(client);
@@ -151,6 +153,7 @@ public class AuthService {
                 LoginResponse loginResponse = new LoginResponse();
                 loginResponse.setId(account.getId());
                 loginResponse.setEmail(account.getEmail());
+                loginResponse.setAvatar(pictureUrl);
                 loginResponse.setFullName(client.getFullName());
                 loginResponse.setRole(account.getRole());
 
