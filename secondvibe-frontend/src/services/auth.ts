@@ -49,10 +49,18 @@ export const logout = async () => {
   return response.data;
 };
 
+const checkEmail = async (email: string): Promise<ApiResponse<boolean>> => {
+  const res = await axiosInstancePublic.post(
+    `http://localhost:8080/auth/check_email?email=${email}`
+  );
+  return res.data;
+};
+
 const authApi = {
   login,
   loginWithGoogle,
   register,
   logout,
+  checkEmail,
 };
 export default authApi;

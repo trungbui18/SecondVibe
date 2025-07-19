@@ -13,7 +13,7 @@ const AccountDropdown = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.auth.user);
-
+  const id = user?.id;
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -30,6 +30,9 @@ const AccountDropdown = () => {
   const handleLogout = () => {
     authApi.logout();
     dispatch(logout());
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("persist:root");
+
     setOpen(false);
     window.location.href = "/login";
   };
@@ -44,6 +47,9 @@ const AccountDropdown = () => {
           <img
             src={user.avatar || "/default-avatar.png"}
             alt="User Avatar"
+            onError={(e) => {
+              e.currentTarget.src = "/default-avatar.png";
+            }}
             className="w-10 h-10 rounded-full"
           />
         ) : (
@@ -64,13 +70,25 @@ const AccountDropdown = () => {
           {user ? (
             <>
               <Link
-                href="/profile"
+                href={`/profile/${id}`}
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               >
                 Profile
               </Link>
               <Link
-                href="/settings"
+                href="/purchases"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                My Purchases
+              </Link>
+              <Link
+                href="/manage/dashboard"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Manage Listing
+              </Link>
+              <Link
+                href="/settings/profile"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               >
                 Settings

@@ -29,6 +29,9 @@ public class ProductResponse {
     String condition;
     String brand;
     String subCategory;
+    String category;
+    String sdt;
     List<ProductSizeRequest> productSizes=new ArrayList<>();
     List<ProductImageResponse> images=new ArrayList<>();
+//    List<SizeQuantityResponse> sizeQuantities=new ArrayList<>();
 }

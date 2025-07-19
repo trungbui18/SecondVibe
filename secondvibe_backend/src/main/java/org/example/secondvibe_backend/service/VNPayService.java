@@ -50,7 +50,7 @@ public class VNPayService {
         return sb.toString();
     }
 
-    public String createPayment(Integer price) {
+    public String createPayment(Integer price,String idReservation) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
@@ -66,7 +66,7 @@ public class VNPayService {
         vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh Toan Cho stu STORE");
+        vnp_Params.put("vnp_OrderInfo", idReservation);
         vnp_Params.put("vnp_OrderType", orderType);
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_ReturnUrl", envConfig.getVnpReturnUrl());

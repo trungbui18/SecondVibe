@@ -14,6 +14,7 @@ export interface LoginResponseData {
   email: string;
   avatar: string;
   role: string;
+  status: string;
   accessToken: string;
   refreshToken: string;
 }

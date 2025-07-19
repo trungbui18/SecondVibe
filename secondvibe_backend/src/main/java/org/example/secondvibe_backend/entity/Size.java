@@ -23,10 +23,16 @@ public class Size {
     @Id
     String id;
     String description;
-
+    int stt;
     @OneToMany(mappedBy = "size",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     List<ProductSize> productSizes=new ArrayList<>();
+
+
+
+    @OneToMany(mappedBy = "size",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<OrderDetail> orderDetails=new ArrayList<>();
 
     @OneToMany(mappedBy = "size",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

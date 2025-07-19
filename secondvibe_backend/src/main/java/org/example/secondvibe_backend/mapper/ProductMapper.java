@@ -1,8 +1,7 @@
 package org.example.secondvibe_backend.mapper;
 
 import org.example.secondvibe_backend.dto.request.ProductCreateRequest;
-import org.example.secondvibe_backend.dto.response.ProductInProfile;
-import org.example.secondvibe_backend.dto.response.ProductResponse;
+import org.example.secondvibe_backend.dto.response.*;
 import org.example.secondvibe_backend.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,9 +25,11 @@ public interface ProductMapper {
     @Mapping(source = "seller.id", target = "seller")
     @Mapping(source = "seller.fullName", target = "sellerName")
     @Mapping(source = "seller.avatar", target = "imageSeller")
+    @Mapping(source = "seller.sdt", target = "sdt")
     @Mapping(source = "condition.description", target = "condition")
     @Mapping(source = "brand.name", target = "brand")
     @Mapping(source = "subCategory.name", target = "subCategory")
+    @Mapping(source = "subCategory.category.name", target = "category")
     @Mapping(source = "productSizes", target = "productSizes")
     @Mapping(source = "images",target = "images")
     ProductResponse toProductResponse(Product product);
@@ -37,6 +38,31 @@ public interface ProductMapper {
     @Mapping(source = "images", target = "img",qualifiedByName = "firstImageUrl")
     ProductInProfile toProductInProfile(Product product);
 
+    @Mapping(source = "subCategory.category.name",target = "category")
+    @Mapping(source="subCategory.name" , target = "subCategory")
+    AllProductAdminResponse toAllProductAdminResponse(Product product);
+
+    List<AllProductAdminResponse> toAllProductAdminResponse(List<Product> products);
+
+    @Mapping(source = "images",target = "images")
+    AllProductRejectedResponse toAllProductRejectedResponse(Product product);
+
+    List<AllProductRejectedResponse> toAllProductRejectedResponse(List<Product> products);
+
+    @Mapping(source = "images", target = "img",qualifiedByName = "firstImageUrl")
+    MyProductResponse toMyProductResponse(Product product);
+
+    @Mapping(source = "seller.id", target = "seller")
+    @Mapping(source = "seller.fullName", target = "sellerName")
+    @Mapping(source = "seller.avatar", target = "imageSeller")
+    @Mapping(source = "condition.description", target = "condition")
+    @Mapping(source = "brand.name", target = "brand")
+    @Mapping(source = "subCategory.name", target = "subCategory")
+    @Mapping(source = "subCategory.category.name", target = "category")
+    @Mapping(source = "images", target = "img",qualifiedByName = "firstImageUrl")
+    ProductViewResponse toProductViewResponse(Product product);
+
+    List<ProductViewResponse> toProductViewResponses(List<Product> products);
     @Named("firstImageUrl")
     default String getFirstImageUrl(List<ProductImage> images) {
         if (images != null && !images.isEmpty()) {
@@ -44,9 +70,6 @@ public interface ProductMapper {
         }
         return null;
     }
-
-
-
 
     @Named("mapSeller")
     default Client mapSeller(int sellerId) {

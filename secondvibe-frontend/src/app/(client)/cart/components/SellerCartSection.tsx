@@ -24,11 +24,14 @@ export default function SellerCartSection({
   return (
     <>
       {sellers.map((seller) => (
-        <div key={seller.id} className="border p-4 rounded shadow-sm">
+        <div key={seller.id} className=" p-4 rounded shadow-sm">
           <div className="flex items-center mb-4 gap-4">
             <img
-              src={seller.urlImage}
+              src={seller.urlImage || "/default-avatar.png"}
               alt={seller.name}
+              onError={(e) => {
+                e.currentTarget.src = "/default-avatar.png";
+              }}
               className="w-10 h-10 rounded-full object-cover"
             />
             <h3 className="font-semibold text-lg">{seller.name}</h3>

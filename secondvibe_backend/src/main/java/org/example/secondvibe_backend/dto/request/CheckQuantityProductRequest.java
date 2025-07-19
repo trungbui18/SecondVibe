@@ -12,6 +12,4 @@ public class CheckQuantityProductRequest {
     int idProduct;
     int quantity;
     String sizeId;
-
-
 }

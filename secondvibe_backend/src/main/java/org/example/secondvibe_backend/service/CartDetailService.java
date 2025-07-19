@@ -66,10 +66,22 @@ public class CartDetailService {
 
 
     public void deleteCartDetailsByIds(List<Integer> ids) {
+        CartDetail cartDetail = cartDetailRepository.findById(ids.get(0))
+                .orElseThrow(()-> new BaseException("khong tim thay san pham trong gio hang"));
+        Cart cart=cartRepository.findById(cartDetail.getCart().getId())
+                .orElseThrow(()->new BaseException("khong tim thay gio hang"));
+        cart.setQuantity(cart.getQuantity() - ids.size());
+        cartRepository.save(cart);
         cartDetailRepository.deleteAllById(ids);
     }
 
     public void deleteCartDetailsById(int id) {
+        CartDetail cartDetail = cartDetailRepository.findById(id)
+                .orElseThrow(()-> new BaseException("khong tim thay san pham trong gio hang"));
+        Cart cart=cartRepository.findById(cartDetail.getCart().getId())
+                .orElseThrow(()->new BaseException("khong tim thay gio hang"));
+        cart.setQuantity(cart.getQuantity() - 1);
+        cartRepository.save(cart);
         cartDetailRepository.deleteById(id);
     }
 

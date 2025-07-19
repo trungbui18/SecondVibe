@@ -2,10 +2,7 @@ package org.example.secondvibe_backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
@@ -13,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = "reservation") // thêm dòng này
 public class ReservationItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,6 +30,6 @@ public class ReservationItem {
 
     @ManyToOne
     @JsonBackReference
-    @JoinColumn(name = "reservation_id")
+    @JoinColumn(name = "reservation_id",nullable = false)
     Reservation reservation;
 }

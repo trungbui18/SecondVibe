@@ -1,5 +1,6 @@
 package org.example.secondvibe_backend.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
@@ -15,6 +16,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductUpdateRequest {
     String name;
     String description;
@@ -22,8 +24,8 @@ public class ProductUpdateRequest {
     ProductStatus status;
     double price;
     int seller;
-    int condition;
-    int brand;
-    int subCategory;
+    String condition;
+    String brand;
+    String subCategory;
     List<ProductSizeRequest> productSizes=new ArrayList<>();
 }

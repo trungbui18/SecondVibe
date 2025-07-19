@@ -12,13 +12,15 @@ import { RootState } from "@/lib/redux/store";
 import { setSelectedItems } from "@/lib/redux/slice/cartSelectedSlice";
 import SellerCartSection from "./components/SellerCartSection";
 import Swal from "sweetalert2";
+import { getCart } from "@/services/cart";
+import { setCartData, setCartCount } from "@/lib/redux/slice/cartSelectedSlice";
 
 export default function CartPage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   const id = user?.id;
-  const MAX_ITEMS = 30;
+  const MAX_ITEMS = 20;
   const timeoutRefs = useRef<Record<number, NodeJS.Timeout>>({});
   const [sellerInCart, setSellerInCart] = useState<SellerInCartResponse[]>([]);
   const [cartDetails, setCartDetails] = useState<CartDetail[]>([]);
@@ -44,17 +46,39 @@ export default function CartPage() {
   }, [id]);
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
+    const totalProduct = selectedIds.length;
 
     try {
+      const result = await Swal.fire({
+        icon: "warning",
+        title: `Do you want to remove the ${totalProduct} products?`,
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+      });
+
+      if (!result.isConfirmed) {
+        return; // Người dùng chọn No
+      }
+
+      // Chỉ xóa khi đã xác nhận Yes
       const res = await cartDetailApi.deleteListCartDetail(selectedIds);
 
-      // Xóa xong thì làm mới lại dữ liệu giỏ hàng
+      // Làm mới dữ liệu giỏ hàng
       const updatedRes = await cartDetailApi.getAllCartDetail(id!);
       setSellerInCart(updatedRes.data);
 
       // Reset checkbox
       setSelectedIds([]);
       dispatch(setSelectedItems([]));
+      try {
+        const cartRes = await getCart();
+        dispatch(setCartData(cartRes));
+        // Nếu cartRes.data.quantity là tổng số lượng sản phẩm
+        dispatch(setCartCount(cartRes.data.quantity || 0));
+      } catch (error) {
+        dispatch(setCartCount(0));
+      }
     } catch (err) {
       console.error("Lỗi khi xóa sản phẩm:", err);
     }
@@ -68,6 +92,14 @@ export default function CartPage() {
       setSellerInCart(updatedRes.data);
       setSelectedIds([]);
       dispatch(setSelectedItems([]));
+      try {
+        const cartRes = await getCart();
+        dispatch(setCartData(cartRes));
+        // Nếu cartRes.data.quantity là tổng số lượng sản phẩm
+        dispatch(setCartCount(cartRes.data.quantity || 0));
+      } catch (error) {
+        dispatch(setCartCount(0));
+      }
     } catch (err) {
       console.error("Lỗi khi xóa sản phẩm:", err);
     }
@@ -101,8 +133,8 @@ export default function CartPage() {
             };
             cartDetailApi
               .updateCartDetail(data)
-              .then((res) => console.log("✅ Updated:", res))
-              .catch((err) => console.error("❌ Update error:", err));
+              .then((res) => console.log(" Updated:", res))
+              .catch((err) => console.error(" Update error:", err));
           }, 1000);
 
           return { ...item, quantity: newQuantity };

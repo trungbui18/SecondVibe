@@ -11,6 +11,7 @@ import org.example.secondvibe_backend.dto.request.RegisterRequest;
 import org.example.secondvibe_backend.dto.response.LoginResponse;
 import org.example.secondvibe_backend.entity.Account;
 import org.example.secondvibe_backend.entity.Client;
+import org.example.secondvibe_backend.entity.Wallet;
 import org.example.secondvibe_backend.entity.enums.AccountStatus;
 import org.example.secondvibe_backend.entity.enums.Role;
 import org.example.secondvibe_backend.exception.BadRequestException;
@@ -41,6 +42,13 @@ public class AuthService {
         this.jwtUntil = jwtUntil;
     }
 
+    public boolean checkExistsEmail(String email){
+        if(accountRepository.existsAccountByEmail(email)){
+            return false;
+        }
+        return true;
+    }
+
     public LoginResponse register(RegisterRequest request) {
         if (accountRepository.existsAccountByEmail(request.getEmail())) {
             throw new BadRequestException("Email is exists");
@@ -66,20 +74,28 @@ public class AuthService {
         client.setAvatar("https://secondvibe.s3.ap-southeast-2.amazonaws.com/anonymous.jpg");
         client.setFullName(request.getFullName());
         client.setBirthday(request.getBirthday());
-        clientRepository.save(client);
-
         account.setClient(client);
 
+
+        Wallet wallet=new Wallet();
+        wallet.setBalance(0.0);
+        wallet.setClient(account.getClient());
+
+
+        client.setWallet(wallet);
+        clientRepository.save(client);
+
+
         LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setId(account.getId());
+        loginResponse.setId(account.getClient().getId());
         loginResponse.setEmail(account.getEmail());
         loginResponse.setFullName(client.getFullName());
         loginResponse.setRole(account.getRole());
         loginResponse.setAvatar(account.getClient().getAvatar());
 
         String role=account.getRole().toString();
-        String accessToken=jwtUntil.generateToken(account.getEmail(),role);
-        String refreshToken=jwtUntil.generateRefreshToken(account.getEmail(),role);
+        String accessToken=jwtUntil.generateToken(account.getEmail(),role,client.getId());
+        String refreshToken=jwtUntil.generateRefreshToken(account.getEmail(),role,client.getId());
         loginResponse.setAccessToken(accessToken);
         loginResponse.setRefreshToken(refreshToken);
 
@@ -91,13 +107,14 @@ public class AuthService {
             throw new UnauthorizedException("Sai mat khau");
         }
         Role role = account.getRole();
-        String accessToken=jwtUntil.generateToken(request.getEmail(), role.toString());
-        String refreshToken=jwtUntil.generateRefreshToken(request.getEmail(),role.toString());
         int idUser=account.getClient().getId();
         String name=account.getClient().getFullName();
         String email=account.getEmail();
         String avatar=account.getClient().getAvatar();
-        return new LoginResponse(idUser,name,email,avatar,role,accessToken,refreshToken);
+        String accessToken=jwtUntil.generateToken(request.getEmail(), role.toString(),idUser);
+        String refreshToken=jwtUntil.generateRefreshToken(request.getEmail(),role.toString(),idUser);
+        AccountStatus accountStatus=account.getStatus();
+        return new LoginResponse(idUser,name,email,avatar,role,accountStatus,accessToken,refreshToken);
     }
 
     public LoginResponse loginWithGoogle(LoginGoogleRequest request) {
@@ -120,10 +137,11 @@ public class AuthService {
                 if(accountRepository.existsAccountByEmail(email)) {
                     Account account=accountRepository.findByEmail(email).orElseThrow(()->new BaseException("Khong tim thay account"));
                     Role role = account.getRole();
-                    String accessToken=jwtUntil.generateToken(email, role.toString());
-                    String refreshToken=jwtUntil.generateRefreshToken(email,role.toString());
                     int idUser=account.getClient().getId();
-                    return new LoginResponse(idUser,name,email,pictureUrl,role,accessToken,refreshToken);
+                    AccountStatus status=account.getStatus();
+                    String accessToken=jwtUntil.generateToken(email, role.toString(),idUser);
+                    String refreshToken=jwtUntil.generateRefreshToken(email,role.toString(),idUser);
+                    return new LoginResponse(idUser,name,email,pictureUrl,role,status,accessToken,refreshToken);
                 }
                 LocalDate today = LocalDate.now();
                 int age = today.getYear() - request.getBirthday().getYear();
@@ -146,20 +164,27 @@ public class AuthService {
 
                 client.setAvatar(pictureUrl);
                 client.setBirthday(request.getBirthday());
-                clientRepository.save(client);
-
                 account.setClient(client);
 
+                Wallet wallet=new Wallet();
+                wallet.setBalance(0.0);
+                wallet.setClient(account.getClient());
+                client.setWallet(wallet);
+                clientRepository.save(client);
+
+
+
                 LoginResponse loginResponse = new LoginResponse();
-                loginResponse.setId(account.getId());
+                loginResponse.setId(account.getClient().getId());
                 loginResponse.setEmail(account.getEmail());
                 loginResponse.setAvatar(pictureUrl);
                 loginResponse.setFullName(client.getFullName());
                 loginResponse.setRole(account.getRole());
+                loginResponse.setStatus(account.getStatus());
 
                 String role=account.getRole().toString();
-                String accessToken=jwtUntil.generateToken(account.getEmail(),role);
-                String refreshToken=jwtUntil.generateRefreshToken(account.getEmail(),role);
+                String accessToken=jwtUntil.generateToken(account.getEmail(),role,client.getId());
+                String refreshToken=jwtUntil.generateRefreshToken(account.getEmail(),role,client.getId());
 
                 loginResponse.setAccessToken(accessToken);
                 loginResponse.setRefreshToken(refreshToken);
@@ -173,7 +198,5 @@ public class AuthService {
             throw new BadRequestException("Có lỗi khi đăng nhập với Google ");
         }
     }
-
-
 }
 

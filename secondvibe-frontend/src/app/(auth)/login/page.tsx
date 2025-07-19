@@ -7,6 +7,8 @@ import authApi from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/lib/redux/slice/authSlice";
+import Swal from "sweetalert2";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,24 +17,41 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Email:", email, "Password:", password);
-    const loginData = {
-      email,
-      password,
-    };
-    const response = await authApi.login(loginData);
-    const userData = response.data;
-    if (response.data) {
-      const { id, email, fullName, avatar, role } = userData;
-      dispatch(setUser({ id, email, fullName, avatar, role }));
-      sessionStorage.setItem("token", response.data.accessToken);
-      if (response.data.role === "ADMINISTRATOR") {
-        router.push("/admin");
+    try {
+      const loginData = { email, password };
+      const response = await authApi.login(loginData);
+      const userData = response.data;
+      if (userData) {
+        if (userData.status === "UNACTIVE") {
+          Swal.fire({
+            icon: "error",
+            title: "Your account is banned",
+            showConfirmButton: true,
+          });
+          router.push("/");
+          return;
+        }
+        const { id, email, fullName, avatar, role } = userData;
+        dispatch(setUser({ id, email, fullName, avatar, role }));
+        sessionStorage.setItem("token", userData.accessToken);
+        if (userData.role === "ADMINISTRATOR") {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
       } else {
-        router.push("/");
+        Swal.fire({
+          icon: "error",
+          title: response.message || "Login failed",
+          showConfirmButton: true,
+        });
       }
-    } else {
-      console.error("Login failed");
+    } catch (error: any) {
+      Swal.fire({
+        icon: "error",
+        title: error?.response?.data?.message || "Đăng nhập thất bại",
+        showConfirmButton: true,
+      });
     }
   };
 

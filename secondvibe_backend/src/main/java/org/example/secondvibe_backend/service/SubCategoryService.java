@@ -24,4 +24,10 @@ public class SubCategoryService {
         List<SubCategoryResponse> subCategoriesResponse = subCategories.stream().map(subCategoryMapper::toSubCategoryResponse).toList();
         return subCategoriesResponse;
     }
+
+    public List<SubCategoryResponse> getAllSubCategoriesByCategory(String name) {
+        List<SubCategory> subCategories = subCategoryRepository.findByCategory_Name(name);
+        List<SubCategoryResponse> subCategoriesResponse = subCategories.stream().map(subCategoryMapper::toSubCategoryResponse).toList();
+        return subCategoriesResponse;
+    }
 }

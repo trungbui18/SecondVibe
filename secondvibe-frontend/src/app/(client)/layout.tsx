@@ -10,7 +10,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
       <div className="px-16">
         <Header />
       </div>
-      <main className="flex-1 px-16">{children}</main>
+      <main className="flex-1 px-16 mt-20">{children}</main>
       <Footer />
     </div>
   );

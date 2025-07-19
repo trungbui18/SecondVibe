@@ -12,6 +12,7 @@ import org.mapstruct.Named;
 public interface ReservationMapper {
     @Mapping(target ="reservationItems",source = "reservationItems")
     @Mapping(target ="client",source = "userId",qualifiedByName = "mapClient")
+    @Mapping(target = "status", constant = "PENDING")
     Reservation toReservation(CreateReservationRequest createReservationRequest);
     @Named("mapClient")
     default Client mapClient(int clientId) {

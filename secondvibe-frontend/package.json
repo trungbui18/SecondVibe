@@ -16,6 +16,7 @@
     "@react-oauth/google": "^0.12.2",
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.9.0",
+    "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.519.0",
     "next": "15.3.2",
     "react": "^19.0.0",
@@ -24,6 +25,7 @@
     "react-redux": "^9.2.0",
     "react-select": "^5.10.1",
     "react-toastify": "^11.0.5",
+    "recharts": "^3.0.0",
     "redux-persist": "^6.0.0",
     "sweetalert2": "^11.22.0",
     "swr": "^2.3.3"

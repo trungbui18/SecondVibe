@@ -31,6 +31,6 @@ public class RegisterRequest {
     String address;
 
     @NotNull(message = "Ngày sinh không được để trống")
-    @Past(message = "Ngay sinh ko hop le")
+    @Past(message = "Yêu cầu phải từ 16 tuổi trở lên")
     LocalDate birthday;
 }

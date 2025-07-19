@@ -36,12 +36,11 @@ public class CartService {
 
     public CartResponse addToCart(CartCreateRequest cartCreateRequest) {
         Cart cart=cartRepository.findByClientId(cartCreateRequest.getIdClient()).orElseGet(()->createCart(cartCreateRequest.getIdClient()));
-        cart.setQuantity(cart.getQuantity()+1);
         cartRepository.save(cart);
 
         Product product=productRepository.findById(cartCreateRequest.getProductId()).orElseThrow(()->new BaseException("Product not found"));
         Size size=sizeRepository.findById(cartCreateRequest.getSizeId()).orElseThrow(()->new BaseException("Size not found"));
-        CartDetail cartdt=cartDetailRepository.findByCartAndAndProductAndAndSize(cart,product,size);
+        CartDetail cartdt=cartDetailRepository.findByCartAndProductAndSize(cart,product,size);
         if(cartdt!=null){
             cartdt.setQuantity(cartdt.getQuantity()+cartCreateRequest.getQuantity());
             cartDetailRepository.save(cartdt);
@@ -51,8 +50,14 @@ public class CartService {
             cartDetail.setCart(cart);
             cartDetail.setSize(size);
             cartDetail.setQuantity(cartCreateRequest.getQuantity());
+            cart.setQuantity(cart.getQuantity()+1);
             cartDetailRepository.save(cartDetail);
         }
+        return cartMapper.toCartResponse(cart);
+    }
+
+    public CartResponse getCartByIdUser(int idUser){
+        Cart cart=cartRepository.findByClientId(idUser).orElseThrow(()->new BaseException("Cart not found"));
         return cartMapper.toCartResponse(cart);
     }
 

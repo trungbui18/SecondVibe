@@ -4,6 +4,7 @@ import org.example.secondvibe_backend.dto.response.SizeResponse;
 import org.example.secondvibe_backend.entity.Size;
 import org.example.secondvibe_backend.mapper.SizeMapper;
 import org.example.secondvibe_backend.repository.SizeRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class SizeService {
     }
 
     public List<SizeResponse> getAll(){
-        List<Size>ds= sizeRepository.findAll();
+        List<Size> ds = sizeRepository.findAll(Sort.by("stt"));
         List<SizeResponse>ls=ds.stream().map(sizeMapper::toSizeResponse).collect(Collectors.toList());
         return ls;
     }

@@ -14,18 +14,21 @@ import storage from "redux-persist/lib/storage";
 
 import authReducer from "./slice/authSlice";
 import cartSelectedReducer from "./slice/cartSelectedSlice";
+import { cartCountReducer, cartDataReducer } from "./slice/cartSelectedSlice";
 
 // Combine các reducer
 const rootReducer = combineReducers({
   auth: authReducer,
   cartSelected: cartSelectedReducer,
+  cartCount: cartCountReducer,
+  cartData: cartDataReducer,
 });
 
 // Cấu hình persist
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["cartSelected"], // chỉ persist giỏ hàng được chọn
+  whitelist: ["cartSelected", "cartCount", "cartData"], // persist cả dữ liệu getCart
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

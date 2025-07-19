@@ -24,12 +24,13 @@ public class JwtUntil {
         return Keys.hmacShaKeyFor(envConfig.getJWTSecretKey().getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String username, String roles) {
+    public String generateToken(String username, String roles,int id) {
         try {
             Instant now = Instant.now();
             return Jwts.builder()
                     .issuer(envConfig.getIssuer())
-                    .subject(username).claim("idUser",5)
+                    .subject(username)
+                    .claim("idUser",id)
                     .claim("role", roles)
                     .issuedAt(Date.from(now))
                     .expiration(Date.from(now.plusSeconds(envConfig.getAccessTokenExpiration())))
@@ -40,12 +41,13 @@ public class JwtUntil {
         }
     }
 
-    public String generateRefreshToken(String username, String roles) {
+    public String generateRefreshToken(String username, String roles,int id) {
         try {
             Instant now = Instant.now();
             return Jwts.builder()
                     .issuer(envConfig.getIssuer())
                     .subject(username)
+                    .claim("idUser",id)
                     .claim("role", roles)
                     .issuedAt(Date.from(now))
                     .expiration(Date.from(now.plusSeconds(envConfig.getRefreshTokenExpiration())))
@@ -55,6 +57,7 @@ public class JwtUntil {
             throw new JwtException("Invalid JWT", e);
         }
     }
+
 
     public Map<String, Object> parseClaims(String token) {
         try {

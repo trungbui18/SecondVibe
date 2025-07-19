@@ -15,7 +15,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
     @Query(value = "SELECT * FROM reservation WHERE MINUTE(time_end) = :minute", nativeQuery = true)
     List<Reservation> findByEndMinute(@Param("minute") int minute);
 
-//    @Query("SELECT SUM(r.quantity) FROM Reservation r WHERE r.product.id = :productId and r.size.id=:sizeId")
-//    int getTotalQuantityByProductId(@Param("productId") int productId , String sizeId);
+    @Query("SELECT r FROM Reservation r LEFT JOIN FETCH r.reservationItems WHERE r.id = :id")
+    Optional<Reservation> findWithItems(@Param("id") String id);
+
+
+
 }
 

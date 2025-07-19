@@ -20,10 +20,10 @@ public class CheckOutController {
 
     @PostMapping
     public ApiResponse<String> payment(@RequestBody CreateReservationRequest request){
-        reservationService.CreateReservation(request);
+        String idReservation= reservationService.CreateReservation(request);
         try {
             if(request.getPaymentMethod()== PaymentMethod.VNPAY){
-                String url= VNPayService.createPayment(request.getTotalAmount());
+                String url= VNPayService.createPayment(request.getTotalAmount(),idReservation);
                 return ApiResponseBuilder.success("Open gateway ",url);
             }
             return ApiResponseBuilder.success("Open gateway ",null);

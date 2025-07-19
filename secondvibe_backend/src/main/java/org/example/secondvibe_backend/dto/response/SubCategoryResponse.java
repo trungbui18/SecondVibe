@@ -13,5 +13,6 @@ import lombok.experimental.FieldDefaults;
 public class SubCategoryResponse {
     int id;
     String name;
+    String category_name;
     String imageSubCategory;
 }

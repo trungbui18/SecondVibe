@@ -24,4 +24,6 @@ public class BrandService {
         List<BrandResponse> brandResponses = brands.stream().map(brandMapper::toBrandResponse).collect(Collectors.toList());
         return brandResponses;
     }
+
+
 }

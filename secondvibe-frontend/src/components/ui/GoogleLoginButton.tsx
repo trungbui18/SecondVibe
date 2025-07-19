@@ -5,6 +5,7 @@ import authApi from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/lib/redux/slice/authSlice";
+import Swal from "sweetalert2";
 export default function GoogleLoginButton() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -20,6 +21,15 @@ export default function GoogleLoginButton() {
       const response = await authApi.loginWithGoogle(request);
       const userData = response.data;
       if (response.data) {
+        if (response.data.status === "UNACTIVE") {
+          Swal.fire({
+            icon: "error",
+            title: "Your account is banned",
+            showConfirmButton: true,
+          });
+          router.push("/");
+          return;
+        }
         const { id, email, fullName, avatar, role } = userData;
         dispatch(setUser({ id, email, fullName, avatar, role }));
         sessionStorage.setItem("token", response.data.accessToken);

@@ -20,6 +20,7 @@ public class CreateReservationRequest {
      String fullName;
      String phone;
      int totalAmount;
+
      @Enumerated(EnumType.STRING)
      DealMethod dealMethod;
 

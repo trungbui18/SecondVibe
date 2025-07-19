@@ -18,10 +18,7 @@ import org.example.secondvibe_backend.response.ApiResponseBuilder;
 import org.example.secondvibe_backend.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.Map;
@@ -36,9 +33,24 @@ public class AuthController {
         this.envConfig = envConfig;
     }
 
+    @PostMapping("/check_email")
+    public ApiResponse<Boolean> checkEmail(@RequestParam String email){
+        boolean check= authService.checkExistsEmail(email);
+        return ApiResponseBuilder.success("Check mail",check);
+    }
+
     @PostMapping("/register")
-    public ApiResponse<LoginResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ApiResponse<LoginResponse> register(@Valid @RequestBody RegisterRequest registerRequest,HttpServletResponse response) {
         LoginResponse registerResponse= authService.register(registerRequest);
+        Cookie refreshTokenCookie = new Cookie("refreshToken", registerResponse.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(Integer.parseInt(String.valueOf(envConfig.getRefreshTokenExpiration())));
+
+        response.addCookie(refreshTokenCookie);
+
+        registerResponse.setRefreshToken(null);
         return ApiResponseBuilder.success("Create Successfully",registerResponse);
     }
 
@@ -72,6 +84,7 @@ public class AuthController {
         return ApiResponseBuilder.success("Lgoin Successfully",loginResponse);
 
     }
+
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", null);

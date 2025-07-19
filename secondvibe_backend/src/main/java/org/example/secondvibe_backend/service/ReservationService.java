@@ -30,13 +30,13 @@ public class ReservationService {
         this.reservationMapper = reservationMapper;
     }
 
-    public void CreateReservation(CreateReservationRequest request) {
+    public String CreateReservation(CreateReservationRequest request) {
         Reservation reservation = reservationMapper.toReservation(request);
         for (ReservationItem item : reservation.getReservationItems()) {
             item.setReservation(reservation);
         }
         reservationRepository.save(reservation);
-
+        return reservation.getId();
     }
 
 //    @Scheduled(cron = "0 * * * * *")

@@ -19,7 +19,7 @@ public class BrandController {
         this.brandService = brandService;
     }
 
-    @GetMapping("/get_all")
+    @GetMapping("/public/get_all")
     public ApiResponse<List<BrandResponse>> getAll(){
         List<BrandResponse> brands=brandService.getAllBrand();
         return ApiResponseBuilder.success("Get All Brand Successfully",brands);

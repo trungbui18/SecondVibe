@@ -2,20 +2,26 @@
 import React, { useState } from "react";
 import UploadImages from "./components/UploadImages";
 import ProductForm from "./components/ProductForm";
-import { ProductSize } from "@/types/product";
+import { ProductSize, SizeQuantityRequest } from "@/types/product";
 import productApi from "@/services/product";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/redux/store";
+
 import Swal from "sweetalert2";
 export default function Page() {
+  const user = useSelector((state: RootState) => state.auth.user);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: 0,
-    seller: 0,
+    seller: user?.id || 0,
     condition: 0,
     brand: 0,
     subCategory: 0,
     productSizes: [] as ProductSize[],
+    sizeQuantities: [] as SizeQuantityRequest[],
   });
 
   const [images, setImages] = useState<File[]>([]);
@@ -30,7 +36,7 @@ export default function Page() {
     // Chuyển đổi giá trị cho các trường số
     let parsedValue: string | number;
     if (name === "price") {
-      parsedValue = parseFloat(value) || 0; // Chuyển thành số thực
+      parsedValue = parseFloat(value) || 0;
     } else if (
       name === "condition" ||
       name === "brand" ||
@@ -104,7 +110,7 @@ export default function Page() {
           formData={formData}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
-          updateProductSizes={updateProductSizes} // Truyền hàm mới
+          updateProductSizes={updateProductSizes}
         />
       </div>
     </div>

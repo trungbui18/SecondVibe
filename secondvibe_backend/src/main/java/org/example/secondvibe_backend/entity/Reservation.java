@@ -3,13 +3,11 @@ package org.example.secondvibe_backend.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.example.secondvibe_backend.entity.enums.DealMethod;
 import org.example.secondvibe_backend.entity.enums.PaymentMethod;
+import org.example.secondvibe_backend.entity.enums.ReservationStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +17,8 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = "reservationItems") // thêm dòng này
+
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,6 +29,9 @@ public class Reservation {
     String fullName;
     String phone;
     double totalAmount;
+
+    @Enumerated(EnumType.STRING)
+    ReservationStatus status;
 
     @Enumerated(EnumType.STRING)
     DealMethod dealMethod;
@@ -42,7 +45,7 @@ public class Reservation {
     @JoinColumn(name = "client_id")
     Client client;
 
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     List<ReservationItem> reservationItems;
 

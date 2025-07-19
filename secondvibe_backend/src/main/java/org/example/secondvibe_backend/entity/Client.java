@@ -3,10 +3,7 @@ package org.example.secondvibe_backend.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
@@ -18,6 +15,8 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +26,7 @@ public class Client {
     String address;
     LocalDate birthday;
     String avatar;
+    double amount;
 
     @OneToOne
     @JoinColumn(name = "account_id",unique = true)
@@ -37,6 +37,14 @@ public class Client {
     @JsonManagedReference
     Cart cart;
 
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<Order> orders;
+
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<Order> ordersOfSeller;
+
     @OneToMany(mappedBy = "seller",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonManagedReference
     List<Product> products=new ArrayList<>();
@@ -44,4 +52,16 @@ public class Client {
     @OneToMany(mappedBy = "client",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonManagedReference
     List<Reservation> reservations;
+
+    // 1-1 relationship với Wallet
+    @OneToOne(mappedBy = "client",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    Wallet wallet;
+
+    // 1-1 relationship với Bank
+    @OneToOne(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    Bank bank;
+
+
 }

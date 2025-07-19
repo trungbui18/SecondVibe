@@ -6,6 +6,8 @@ import authApi from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/lib/redux/slice/authSlice";
+import Swal from "sweetalert2";
+
 export default function RegisterPage() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -24,24 +26,46 @@ export default function RegisterPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleNextStep = (e: React.FormEvent) => {
+  const handleNextStep = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.email) {
+      const res = await authApi.checkEmail(formData.email);
+      console.log(res.data);
+      if (!res.data) {
+        Swal.fire({
+          icon: "error",
+          title: "Your email is existed",
+          showConfirmButton: true,
+        });
+        return;
+      }
       setStep(2);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await authApi.register(formData);
-    const userData = response.data;
-    if (response.data) {
-      const { id, email, fullName, avatar, role } = userData;
-      dispatch(setUser({ id, email, fullName, avatar, role }));
-      sessionStorage.setItem("token", response.data.accessToken);
-      router.push("/");
-    } else {
-      console.error("Login failed");
+    try {
+      const response = await authApi.register(formData);
+      const userData = response.data;
+      if (userData) {
+        const { id, email, fullName, avatar, role } = userData;
+        dispatch(setUser({ id, email, fullName, avatar, role }));
+        sessionStorage.setItem("token", response.data.accessToken);
+        router.push("/");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: response.message || "Đăng ký thất bại",
+          showConfirmButton: true,
+        });
+      }
+    } catch (error: any) {
+      Swal.fire({
+        icon: "error",
+        title: error?.response?.data?.message || "Đăng ký thất bại",
+        showConfirmButton: true,
+      });
     }
   };
 
@@ -51,11 +75,22 @@ export default function RegisterPage() {
       onSubmit={step === 1 ? handleNextStep : handleSubmit}
     >
       <h2 className="text-2xl text-red-500 font-semibold">Đăng Ký</h2>
-      <p className="text-gray-600 mb-4">
-        {step === 1
-          ? "Nhập email của bạn để bắt đầu"
-          : "Vui lòng điền thông tin cá nhân"}
-      </p>
+      <div className="text-gray-600 mb-4">
+        {step === 1 ? (
+          "Nhập email của bạn để bắt đầu"
+        ) : (
+          <>
+            <div
+              className=" hover:underline hover:text-red-500 cursor-pointer mb-2"
+              onClick={() => {
+                setStep(1);
+              }}
+            >
+              &larr; Quay lại
+            </div>
+          </>
+        )}
+      </div>
 
       {step === 1 && (
         <div>

@@ -46,9 +46,18 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**","/product/**","/brand/**","/size/**","/condition/**"
-                        ,"/subcategory/**","/category/**","/client/**","/cart/**","/cart_detail/**"
-                        ,"/order/**","/checkout/**").permitAll()
+                        .requestMatchers("/auth/**","/product/public/**","/brand/public/**","/size/**","/condition/**"
+                        ,"/subcategory/public/**","/category/**","/client/public/**","/cart/**","/cart_detail/**"
+                        ,"/order/public/**","/checkout/**","/orderdetail/public/**","/rating/**"
+                        ,"/wallet/**").permitAll()
+                        .requestMatchers("/product/admin/**","/client/admin/**"
+                                , "/order/admin/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers("/order/client/**").hasRole("CLIENT")
+                        .requestMatchers("/orderdetail/client/**").hasRole("CLIENT")
+                        .requestMatchers("/client/client/**").hasRole("CLIENT")
+
+
+
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -56,6 +65,7 @@ public class SecurityConfig {
                                 .decoder(jwtDecoder)
                                 .jwtAuthenticationConverter(jwtToken -> {
                                     String role = jwtToken.getClaimAsString("role");
+                                    Long idUser = jwtToken.getClaim("idUser");
                                     List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
                                     return new JwtAuthenticationToken(jwtToken, authorities);
                                 })
